@@ -8,7 +8,7 @@ import (
 )
 
 func Run(c *config.Config) error {
-	fileWatcher, err := file_watcher.NewFileWatcher(c.FilePath)
+	fileWatcher, err := file_watcher.NewFileWatcher(c.FilePaths)
 	if err != nil {
 		return err
 	}

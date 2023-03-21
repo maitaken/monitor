@@ -9,14 +9,16 @@ type FileWatcher struct {
 	update  chan struct{}
 }
 
-func NewFileWatcher(filepath string) (*FileWatcher, error) {
+func NewFileWatcher(filepaths []string) (*FileWatcher, error) {
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		return nil, err
 	}
-	err = w.Add(filepath)
-	if err != nil {
-		return nil, err
+	for _, p := range filepaths {
+		err = w.Add(p)
+		if err != nil {
+			return nil, err
+		}
 	}
 	c := make(chan struct{})
 	watcher := &FileWatcher{

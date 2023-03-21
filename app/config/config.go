@@ -19,16 +19,28 @@ type ConfigParseError struct {
 	message string
 }
 
+type FilePathOption []string
+
+func (o *FilePathOption) String() string {
+	return fmt.Sprintf("%v", *o)
+}
+
+func (o *FilePathOption) Set(s string) error {
+	*o = append(*o, s)
+	return nil
+}
+
 type Config struct {
-	FilePath string
-	Cmd      string
+	FilePaths []string
+	Cmd       string
 }
 
 func NewConfig() (*Config, error) {
-	f := flag.String("f", "", "specify file path")
+	var paths FilePathOption
+	flag.Var(&paths, "f", "specify file path")
 	flag.Parse()
 
-	if len(*f) == 0 {
+	if len(paths) == 0 {
 		return nil, ConfigParseError{"file path not specified"}
 	}
 	if len(flag.Args()) != 1 {
@@ -36,7 +48,7 @@ func NewConfig() (*Config, error) {
 	}
 	cmd := flag.Args()[0]
 	return &Config{
-		FilePath: *f,
-		Cmd:      cmd,
+		FilePaths: paths,
+		Cmd:       cmd,
 	}, nil
 }
